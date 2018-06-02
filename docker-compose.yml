@@ -1,24 +1,16 @@
-version: "3"
+version: '3.5'
 
 services:
 
   gui:
-    image: gui
-    build: ./gui
-    ports:
-      - 80
-    environment:
-      VIRTUAL_HOST: "*/*"
-
-  lb:
-    image: dockercloud/haproxy
+    container_name: gui
+    build:
+      context: ./gui
+      dockerfile: Dockerfile
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - './gui:/usr/src/gui'
+      - '/usr/src/gui/node_modules'
     ports:
-      - '80:80'
-      - '1936:1936'
-    links:
-      - gui
-
-volumes:
-    database-storage:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
