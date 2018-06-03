@@ -8,9 +8,33 @@ services:
       context: ./gui
       dockerfile: Dockerfile
     volumes:
-      - './gui:/usr/src/gui'
-      - '/usr/src/gui/node_modules'
+      - ./gui:/usr/src/gui
+      - /usr/src/gui/node_modules
     ports:
-      - '3000:3000'
+      - 80:3000
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
+      VIRTUAL_HOST: '*/*'
+      VIRTUAL_HOST_WEIGHT: 0
+
+
+  backend:
+    image: backend
+    build: ./backend
+    command: python app.py
+    ports:
+      - 80
+    environment:
+      VIRTUAL_HOST: '*/backend, */backend/*'
+      VIRTUAL_HOST_WEIGHT: 10
+
+  lb:
+    image: dockercloud/haproxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 80
+      - 1936:1936
+    links:
+      - backend
+      - gui
