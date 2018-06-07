@@ -28,13 +28,24 @@ services:
       VIRTUAL_HOST: '*/backend, */backend/*'
       VIRTUAL_HOST_WEIGHT: 10
 
+  db:
+    container_name: mongo
+    image: mongo:latest
+    volumes:
+      - data:/run/db
+    ports:
+      - 27017:27017
+
   lb:
     image: dockercloud/haproxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 80
-      - 1936:1936
     links:
+      - db
       - backend
       - gui
+
+volumes:
+  data:
