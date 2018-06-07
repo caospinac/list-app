@@ -8,13 +8,12 @@ services:
       context: ./gui
       dockerfile: Dockerfile
     volumes:
-      - ./gui:/usr/src/gui
-      - /usr/src/gui/node_modules
+      - ./gui:/gui
     ports:
       - 80:3000
     environment:
       NODE_ENV: development
-      VIRTUAL_HOST: '*/*'
+      VIRTUAL_HOST: "*/gui, */gui*"
       VIRTUAL_HOST_WEIGHT: 0
 
 
@@ -24,6 +23,8 @@ services:
     command: python app.py
     ports:
       - 80
+    volumes:
+      - ./backend:/backend
     environment:
       VIRTUAL_HOST: '*/backend, */backend/*'
       VIRTUAL_HOST_WEIGHT: 10
