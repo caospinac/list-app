@@ -3,12 +3,25 @@ import request from 'superagent';
 
 class App extends Component {
 
+  constructor(props) {
+    super(props)
+    request
+    .get('/backend/post')
+    .then(res => {
+      this.status  = {
+        data: res
+      }
+      console.log(res);
+    }, err => {
+      console.log(err);
+    });
+  }
+
 
   handleClick = () => {
     var val = document.getElementById('in').value
-    request.open('POST', 'http://localhost/backend/post', true);
     request
-    .open('GET', 'http://localhost/backend/post', true)
+    .post('/backend/data')
     .send({"Name": val})
     .then(res => {
       console.log(res);
