@@ -4,24 +4,31 @@ import request from 'superagent';
 class App extends Component {
 
   constructor(props) {
-    super(props)
+    super(props);
+    this.state = {
+      data: []
+    }
+  }
+
+  componentDidMount = () => {
     request
-    .get('/backend/post')
+    .get('http://localhost:8000/data')
+    .set('Accept', 'application/json')
     .then(res => {
-      this.status  = {
-        data: res
-      }
-      console.log(res);
-    }, err => {
+      this.setState({
+        data: res.body.data
+      });
+      console.log(res.body.data);
+    })
+    .catch(err => {
       console.log(err);
     });
   }
 
-
-  handleClick = () => {
+  handleSubmitClick = () => {
     var val = document.getElementById('in').value
     request
-    .post('/backend/data')
+    .post('http://localhost:8000/data')
     .send({"Name": val})
     .then(res => {
       console.log(res);
@@ -31,10 +38,20 @@ class App extends Component {
   }
 
   render() {
+    const { data } = this.state;
     return (
       <div>
         <input type="text" id="in"></input>
-        <button onClick={this.handleClick}>Submit</button>
+        <button onClick={this.handleSubmitClick}>Submit</button>
+        <ul>
+          {
+            data.map(r => (
+              <li key={r._id}>
+                {r.Name}
+              </li>
+            ))
+          }
+        </ul>
       </div>
     );
   }
